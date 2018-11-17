@@ -39,7 +39,7 @@
  '(magit-diff-use-overlays nil)
  '(package-selected-packages
    (quote
-    (slack togetherly yasnippet-snippets yasnippet yasnippet-classic-snippets auctex virtualenvwrapper atom-dark-theme neotree gruvbox-theme markdown-mode solarized-theme smartparens rainbow-delimiters pyenv-mode powerline pomodoro org-pomodoro org-bullets nlinum multiple-cursors monokai-theme monokai-alt-theme material-theme magit jedi helm fireplace elpy dashboard anaconda-mode ace-jump-mode)))
+    (git-gutter slack togetherly yasnippet-snippets yasnippet yasnippet-classic-snippets auctex virtualenvwrapper atom-dark-theme neotree gruvbox-theme markdown-mode solarized-theme smartparens rainbow-delimiters pyenv-mode powerline pomodoro org-pomodoro org-bullets nlinum multiple-cursors monokai-theme monokai-alt-theme material-theme magit jedi helm fireplace elpy dashboard anaconda-mode ace-jump-mode)))
  '(pos-tip-background-color "#FFFACE")
  '(pos-tip-foreground-color "#272822")
  '(send-mail-function (quote mailclient-send-it))
@@ -140,6 +140,12 @@ ac-source-words-in-same-mode-buffers))
 ;; 'logo which displays an alternative emacs logo
 ;; 1, 2 or 3 which displays one of the text banners
 ;; "path/to/your/image.png" which displays whatever image you would prefer
+(setq dashboard-items '((recents  . 5)
+                        (bookmarks . 5)
+                        (projects . 5)
+                        (agenda . 5)
+                        (registers . 5)))
+
 (global-set-key (kbd "C-x g") 'magit-status)
 
 (require 'helm)
@@ -190,7 +196,10 @@ ac-source-words-in-same-mode-buffers))
 (setq org-hide-emphasis-markers t)
 
 
-
+(require 'org)
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
+(setq org-log-done t)
 
 (add-hook 'org-mode-hook 'variable-pitch-mode)
 
@@ -237,3 +246,15 @@ ac-source-words-in-same-mode-buffers))
       delete-old-versions    t  ; Automatically delete excess backups:
       kept-new-versions      20 ; how many of the newest versions to keep
       kept-old-versions      5) ; and how many of the old
+
+(setq org-agenda-files (list "~/org/work.org"
+                             "~/org/school.org"
+                             "~/org/home.org"
+			     "~/Documents/2021/notes/notes.org"
+			     "~/Documents/2021/temp/blogpost.org"))
+
+
+(setq org-default-notes-file (concat org-directory "/school.org"))
+(define-key global-map "\C-cc" 'org-capture)
+
+(global-git-gutter-mode +1)

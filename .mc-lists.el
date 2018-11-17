@@ -11,6 +11,8 @@
 (setq mc/cmds-to-run-once
       '(
 	helm-find-files
+	keyboard-escape-quit
+	kill-region
 	mouse-set-region
 	org-export-dispatch
 	suspend-frame
