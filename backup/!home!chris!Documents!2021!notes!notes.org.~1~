@@ -1,0 +1,101 @@
+* Preamble
+#+OPTIONS: toc:nil
+#+OPTIONS: author:nil date:nil
+#+OPTIONS: num:nil
+
+#+LATEX_HEADER: \usepackage{parskip}
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{titlesec}
+
+#+LATEX_HEADER: \setlength{\parindent}{-10pt}
+#+LATEfeed
+#+LATEX_HEADER: \titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+#+LATEX_HEADER: \usepackage[top=1cm]{geometry}
+#+latex_class_options: [10pt]
+
+* Todo
+** DONE Find license på go
+In glossary
+** DONE Glossary
+
+Branch: glossary
+`[[/home/chris/Documents/2021/APEX-go/docs/glossary.md]]
+
+** DONE Demo of Fossology
+   Only the local files of Apex-Go for now
+** DONE Look through Issue 608
+https://gitlab.com/2021AI/2021ai-platform/issues/608
+Looking through it, we need to find a tool that makes this easy to find all OSS license
+
+Fossology - Scanner ?
+Whitesource - Checks on build ?
+*** FOSSOLOGY
+    ONly finds license if its described in the header of the files
+** DONE Generate report for Enterprise
+** DONE DNS on google cloud
+*P* DONE Upload files to geomatic instance and run examples
+*** password
+MPwpXFjN
+*** Examples run
+**** churn .ipynb
+- Errors
+**** credit _risk.ipynb
+- Errors
+  - /usr/local/lib/python3.5/dist-packages/sklearn/ensemble/weight_boosting.py:29: DeprecationWarning: numpy.core.umath_tests is an internal NumPy module and should not be imported. It will be removed in a future NumPy release. from numpy.core.umath_tests import inner1d
+
+  - /usr/local/lib/python3.5/dist-packages/seaborn/regression.py:546: UserWarning: The `size` paramter has been renamed to `height`; please update your code.
+   warnings.warn(msg, UserWarning)
+**** fraud _detection.ipynb
+- Errors
+  - /usr/local/lib/python3.5/dist-packages/seaborn/regression.py:546: UserWarning: The `size` paramter has been renamed to `height`; please update your code.
+  warnings.warn(msg, UserWarning)
+
+**** linear _regression.ipynb
+- Errors
+**** matplotlib.ipynb
+- Errors
+**** price _suggestion.ipynb
+- Errors
+  - ImportError: No module named 'xgboost'
+  - NameError: name 'xgb' is not defined
+  - NameError: name 'Tokenizer' is not defined
+  - NameError: name 'X_train' is not defined
+**** sales _prediction.ipynb
+- Errors
+  - /usr/local/lib/python3.5/dist-packages/sklearn/ensemble/weight_boosting.py:29: DeprecationWarning: numpy.core.umath_tests is an internal NumPy module and should not be imported. It will be removed in a future NumPy release.
+    from numpy.core.umath_tests import inner1d
+  - ImportError: No module named 'xgboost'
+**** taxi _duration.ipynb
+- Errors
+  - ImportError: No module named 'xgboost'
+  - NameError: name 'PCA' is not
+** TODO Google cloud cert
+data engineer
+* General
+** Linux Commands
+- xclip -sel clip < "file"
+
+* Redmine
+ On server to update repo
+git fetch origin +refs/heads/*:refs/heads/*
+git reset --soft
+
+To reference issue in commit message:
+"refs #<id>"
+
+To also ref in gitlab:
+"<PROJECT>-<ID>"
+* FOSSology
+** Installation
+
+   Easy to setup in docker for single use, or can be linked to a database outside docker
+Run docker run -p 8081:80 fossology/fossology
+
+Upload source code to fossology and the scans begin to find the licenses. Need to adress them one by one or by bulk.
+Still need to look through it, not 100% automatic
+
+** Issues
+   Uploaded local github repo of Apex-Go. Included python venv
+   This is the tools used locally to deploy Go, but not what is currently on the VM
+
+#+INCLUDE: "~/.emacs" src emacs-lisp

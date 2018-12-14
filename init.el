@@ -37,9 +37,10 @@
      ("#3C3D37" . 100))))
  '(hl-sexp-background-color "#1c1f26")
  '(magit-diff-use-overlays nil)
+ '(org-trello-current-prefix-keybinding "C-c o" nil (org-trello))
  '(package-selected-packages
    (quote
-    (git-gutter slack togetherly yasnippet-snippets yasnippet yasnippet-classic-snippets auctex virtualenvwrapper atom-dark-theme neotree gruvbox-theme markdown-mode solarized-theme smartparens rainbow-delimiters pyenv-mode powerline pomodoro org-pomodoro org-bullets nlinum multiple-cursors monokai-theme monokai-alt-theme material-theme magit jedi helm fireplace elpy dashboard anaconda-mode ace-jump-mode)))
+    (ox-pandoc pandoc pandoc-mode org-trello yaml-mode git-gutter slack togetherly yasnippet-snippets yasnippet yasnippet-classic-snippets auctex virtualenvwrapper atom-dark-theme neotree gruvbox-theme markdown-mode solarized-theme smartparens rainbow-delimiters pyenv-mode powerline pomodoro org-pomodoro org-bullets nlinum multiple-cursors monokai-theme monokai-alt-theme material-theme magit jedi helm fireplace elpy dashboard anaconda-mode ace-jump-mode)))
  '(pos-tip-background-color "#FFFACE")
  '(pos-tip-foreground-color "#272822")
  '(send-mail-function (quote mailclient-send-it))
@@ -258,3 +259,6 @@ ac-source-words-in-same-mode-buffers))
 (define-key global-map "\C-cc" 'org-capture)
 
 (global-git-gutter-mode +1)
+
+(require 'org-trello)
+(eval-after-load "org" '(require 'ox-odt nil t))

@@ -1,0 +1,7 @@
+
+def roll(n):
+    dice = 0
+    for i in range(n)):
+        dice += randrange(1,n+1)
+
+    print(dice)

@@ -1,0 +1,102 @@
+Introduction to Git
+===================
+
+Git is version-control system for tracking changes in computer files and coordinating work on those files among multiple people.
+Git works by making a clone of the repository from at server, whenever making changes to your local copy git records and keeps track of the changes. Once the work is done locally you 'push' the changes to the server.
+
+Installing git
+--------------
+
+Windows
+~~~~~~~
+
+Linux
+~~~~~
+Git can be installed by your package manager
+
+::
+
+   sudo apt-get install git
+
+
+
+Workflow using git
+------------------
+
+Git supports the use of branches, when creating a new git repository a 'master' branch is also created for you. Branching is used to develop different features on the same project without interrupting or disturbing the other features while developing or testing.
+
+Lets say Bob is to develop feature A, so he creates branch named featureA, he can then modify the project in branch featureA without ruining the master branch. Bob finishes his feature and no more bugs present, now he would like to share his work with the others and get his feature implemented into the master branch, this is called merging.
+
+To see the current branch use
+
+::
+
+   git branch
+
+This will show all the branches in your local git repo, and highlight the current branch.
+
+To create a new branch call git branch again with the name appended.
+
+
+::
+
+   git branch <name>
+
+where <name> is the name of the branch to be created.
+
+
+To switch to another branch use the git command checkout
+
+::
+
+   git checkout <name>
+
+
+
+Making changes with git
+-----------------------
+
+To see what is going in the git repository one can use the command
+
+::
+
+   git status
+
+This will display what files have been deleted, changed or added to the repo
+
+
+
+When changes have been made to a file and no more changes are to be made right now, you want to commit the changes. First add the file with changes to the staging area
+
+::
+
+   git add <file>
+
+You can add more files if you want.
+
+
+Now it's time to commit the changes, this is usually done with a message to tell others what changes have been made.
+
+
+::
+
+   git commit -m ""
+
+
+The message should be between the quotation marks. This tells git (and other people) that the changes are final.
+
+
+Now it's time to push the commit to the remote server.
+
+::
+
+   git push
+
+Updating files
+--------------
+
+Let's say you have an outdated version of the repository on your local machine, and other people have made changes. You want to update your local version.
+
+::
+
+   git pull

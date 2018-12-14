@@ -1,0 +1,82 @@
+import random
+
+turns = [0,0,0,0,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+turns = [0,0,1,0,0,1,0,1,1,1,1,0,0,1,1,]
+
+antalSlag = 100
+
+class Player():
+
+    def __init__(self):
+        self.pos = 0
+        self.omgange = 0
+        self.taare = 0
+        self.gear = 3
+        self.STALIN = False
+
+        print("New player in gear: " + str(self.gear))
+
+
+    def roll(self):
+        dice = 0
+
+        if self.gear > 3:
+            print("Cant throw more that 3 dice")
+            self.gear = 3
+
+        elif self.gear < 1:
+            print("Cant throw less than 1 die")
+            self.gear = 1
+
+        for i in range(self.gear):
+            dice += random.randint(1,4)
+        return dice
+
+    def af_banen(self, roll):
+        self.taare += 12
+        self.gear = 1
+        self.afbanen = True
+
+        for i in range(roll):
+            self.pos+=1
+            if self.pos == len(turns):
+                self.omgange += 1
+                self.pos = 0
+            if turns[self.pos] == 1:
+                return
+
+
+    def take_turn(self):
+
+        if self.STALIN:
+            self.gear += 1
+
+        roll = self.roll()
+
+        if roll >= 10:
+            print("AF BANEN")
+            self.af_banen(roll)
+            return
+
+        if self.gear == 3 and roll == 3:
+            print("Smadret gearkase")
+            self.taare += 12
+            self.gear = 1
+            return
+
+        else:
+            for i in range(roll):
+                self.pos+=1
+                if self.pos == len(turns):
+
+                    self.omgange += 1
+                    self.pos = 0
+
+                if roll >= 7 and turns[self.pos] == 1:
+                    print("hvin")
+                    self.taare += 1
+        print(self.pos)
+
+player1 = Player()
+
+player1.take_turn()

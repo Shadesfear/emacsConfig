@@ -1,0 +1,50 @@
+from p5 import *
+
+class Rbane:
+    def __init__(self):
+        pass
+
+
+    def forward(self, ):
+        pass
+
+    def turn(self, angle):
+        rotate(angle)
+
+    def drawHex(self):
+        pass
+
+    def polygon(self, x, y, radius, npoints):
+        angle = TWO_PI / npoints;
+        a = 0
+        while(a < TWO_PI):
+            sx = x + cos(a) * radius
+            sy = y + sin(a) * radius
+            add_vertex(sx, sy)
+            i += angle
+
+    def polygon(self, x, y, radius, np):
+        circle((x,y),radius)
+
+
+
+def setup():
+    size(600,600)
+    background(51)
+
+
+def draw():
+    background(51)
+    bane = Rbane()
+    #polygon(0,0,10,6)
+    #bane.polygon(0,0,100,0)
+    noob = PShape()
+    #add_child()
+    noob.edit()
+    noob._in_edit_mode = True
+    noob.add_vertex((0,0))
+    #noob.add_vertex((3,4))
+
+
+if __name__=="__main__":
+    run()

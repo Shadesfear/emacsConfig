@@ -1,0 +1,4 @@
+* Tasks
+** TODO some2
+   [2018-11-15 Thu]
+   [[file:~/.emacs.d/init.el::(setq%20org-default-notes-file%20(concat%20org-directory%20"school.org"))][file:~/.emacs.d/init.el::(setq org-default-notes-file (concat org-directory "school.org"))]]

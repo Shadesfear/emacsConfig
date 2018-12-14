@@ -1,0 +1,36 @@
+% Created 2018-12-05 Wed 10:29
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\author{Chris Toft}
+\date{\today}
+\title{sharpeningyourtoolkit}
+\hypersetup{
+  pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs 25.2.2 (Org mode 8.2.10)}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Sharpening your toolkit}
+\label{sec-1}
+In a world that is constantly changing, in a world where you have to keep up with your ever changing surroundings. The task of keeping yourself relevant is not an easy one, it's actually enormously tough! Jobs requiring four years of experience in a JavaScript library that was released only a year ago, for an entry level job.
+If you are not always knowledgeable in the current tools being developed and used in corporations around the globe you will fall behind your peers, this is just the world we live in in 2018.
+% Emacs 25.2.2 (Org mode 8.2.10)
+\end{document}

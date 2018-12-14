@@ -1,0 +1,27 @@
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch master
+# Your branch is up to date with 'origin/master'.
+#
+# Changes to be committed:
+#	modified:   .mc-lists.el
+#	modified:   init.el
+#	modified:   recentf
+#
+# Untracked files:
+#	auto-save-list/.saves-25310-cdeb~
+#	auto-save-list/.saves-8010-cdeb~
+#	auto-save-list/.saves-9065-cdeb~
+#	backup/
+#	bookmarks
+#	elpa/circe-20180525.1231/
+#	elpa/emojify-20180611.1538/
+#	elpa/git-gutter-20161105.1356/
+#	elpa/ht-20180129.2234/
+#	elpa/oauth2-0.11.signed
+#	elpa/oauth2-0.11/
+#	elpa/request-20170201.147/
+#	elpa/websocket-20180423.16/
+#
