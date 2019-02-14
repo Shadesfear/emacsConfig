@@ -2,8 +2,18 @@
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
                     (not (gnutls-available-p))))
        (proto (if no-ssl "http" "https")))
+  (when no-ssl
+    (warn "\
+Your version of Emacs does not support SSL connections,
+which is unsafe because it allows man-in-the-middle attacks.
+There are two things you can do about this warning:
+1. Install an Emacs version that does support SSL and be safe.
+2. Remove this warning from your init file so you won't see it again."))
+  ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
   (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+  ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
   (when (< emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
     (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
 (package-initialize)
 
@@ -40,7 +50,7 @@
  '(org-trello-current-prefix-keybinding "C-c o" nil (org-trello))
  '(package-selected-packages
    (quote
-    (ox-pandoc pandoc pandoc-mode org-trello yaml-mode git-gutter slack togetherly yasnippet-snippets yasnippet yasnippet-classic-snippets auctex virtualenvwrapper atom-dark-theme neotree gruvbox-theme markdown-mode solarized-theme smartparens rainbow-delimiters pyenv-mode powerline pomodoro org-pomodoro org-bullets nlinum multiple-cursors monokai-theme monokai-alt-theme material-theme magit jedi helm fireplace elpy dashboard anaconda-mode ace-jump-mode)))
+    (ox-pandoc pandoc pandoc-mode org-trello yaml-mode git-gutter slack togetherly yasnippet-snippets yasnippet yasnippet-classic-snippets auctex virtualenvwrapper atom-dark-theme neotree gruvbox-theme markdown-mode solarized-theme smartparens rainbow-delimiters pyenv-mode powerline pomodoro org-pomodoro org-bullets nlinum multiple-cursors monokai-theme monokai-alt-theme material-theme magit jedi helm fireplace elpy anaconda-mode ace-jump-mode)))
  '(pos-tip-background-color "#FFFACE")
  '(pos-tip-foreground-color "#272822")
  '(send-mail-function (quote mailclient-send-it))
@@ -73,7 +83,9 @@
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
-(global-linum-mode 1)
+(linum-relative-global-mode 1)
+(visual-line-mode 1)
+
 
 ;;******************
 ;; Multiple cursors
@@ -127,25 +139,6 @@ ac-source-words-in-same-mode-buffers))
 
 (require 'powerline)
 (powerline-default-theme)
-
-;;(require 'ido)
-;;(ido-mode t)
-
-(require 'dashboard)
-(dashboard-setup-startup-hook)
-
-(setq dashboard-banner-logo-title "You probably think that you are better now, better now")
-(setq dashboard-startup-banner "~/Pictures/icons/post-malone.jpeg")
-;; Value can be
-;; 'official which displays the official emacs logo
-;; 'logo which displays an alternative emacs logo
-;; 1, 2 or 3 which displays one of the text banners
-;; "path/to/your/image.png" which displays whatever image you would prefer
-(setq dashboard-items '((recents  . 5)
-                        (bookmarks . 5)
-                        (projects . 5)
-                        (agenda . 5)
-                        (registers . 5)))
 
 (global-set-key (kbd "C-x g") 'magit-status)
 
@@ -233,6 +226,7 @@ ac-source-words-in-same-mode-buffers))
 (require 'latex)
 (sp-pair "$" "$")
 
+
 (add-to-list 'load-path
               "~/.emacs.d/plugins/yasnippet")
 (require 'yasnippet)
@@ -262,3 +256,56 @@ ac-source-words-in-same-mode-buffers))
 
 (require 'org-trello)
 (eval-after-load "org" '(require 'ox-odt nil t))
+
+(setq TeX-save-query nil)
+(add-hook 'doc-view-mode-hook 'auto-revert-mode)
+
+(defun ask-user-about-supersession-threat (fn)
+  "blatantly ignore files that changed on disk"
+  )
+(defun ask-user-about-lock (file opponent)
+  "always grab lock"
+  t)
+
+(setq revert-without-query '(".*"))
+
+(setq next-line-add-newlines t)
+
+(defun my-custom-function () 'org-latex-export-to-pdf)
+
+(add-hook 'after-save-hook 'my-custom-function)
+
+(defun increment-number-at-point ()
+  (interactive)
+  (skip-chars-backward "0-9")
+  (or (looking-at "[0-9]+")
+      (error "No number at point"))
+  (replace-match (number-to-string (1+ (string-to-number (match-string 0))))))
+
+(defun my-decrement-number-decimal ()
+  (interactive)
+  (skip-chars-backward "0-9")
+  (or (looking-at "[0-9]+")
+      (error "No number at point"))
+  (replace-match (number-to-string (1- (String-to-number (match-string 0))))))
+
+
+
+(global-set-key (kbd "C-c +") 'increment-number-at-point)
+
+;;(require 'sublimity)
+;; (require 'sublimity-scroll)
+;; (require 'sublimity-map) ;; experimental
+;; (require 'sublimity-attractive)
+
+(require 'dimmer) ; unless installed as a package
+(dimmer-mode)
+
+;;'(use-package docker
+;;  :ensure t
+;;//d
+;;:bind ("C-c d" . docker))
+
+(setq inhibit-startup-screen t)
+
+(global-set-key (kbd "C-c C-a") 'comment-line)
