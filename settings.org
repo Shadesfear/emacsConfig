@@ -1,0 +1,499 @@
+
+* Bootstrap
+** Better Defaults
+
+#+BEGIN_SRC emacs-lisp
+(setq-default
+ ad-redefinition-action 'accept                   ; Silence warnings for redefinition
+ auto-window-vscroll nil                          ; Lighten vertical scroll
+ confirm-kill-emacs 'yes-or-no-p                  ; Confirm before exiting Emacs
+ cursor-in-non-selected-windows nil               ; Hide the cursor in inactive windows
+ delete-by-moving-to-trash t                      ; Delete files to trash
+ display-time-default-load-average nil            ; Don't display load average
+ display-time-format "%H:%M"                      ; Format the time string
+ fill-column 80                                   ; Set width for automatic line breaks
+ help-window-select t                             ; Focus new help windows when opened
+ indent-tabs-mode nil                             ; Stop using tabs to indent
+ inhibit-startup-screen t                         ; Disable start-up screen
+ initial-scratch-message ""                       ; Empty the initial *scratch* buffer
+ mouse-yank-at-point t                            ; Yank at point rather than pointer
+ ns-use-srgb-colorspace nil                       ; Don't use sRGB colors
+ recenter-positions '(5 top bottom)               ; Set re-centering positions
+ scroll-conservatively most-positive-fixnum       ; Always scroll by one line
+ scroll-margin 10                                 ; Add a margin when scrolling vertically
+ select-enable-clipboard t                        ; Merge system's and Emacs' clipboard
+ sentence-end-double-space nil                    ; End a sentence after a dot and a space
+ show-trailing-whitespace nil                     ; Display trailing whitespaces
+ split-height-threshold nil                       ; Disable vertical window splitting
+ split-width-threshold nil                        ; Disable horizontal window splitting
+ tab-width 4                                      ; Set width for tabs
+ uniquify-buffer-name-style 'forward              ; Uniquify buffer names
+ window-combination-resize t                      ; Resize windows proportionally
+ x-stretch-cursor t)                              ; Stretch cursor to the glyph width
+(cd "~/")                                         ; Move to the user directory
+(delete-selection-mode 1)                         ; Replace region when inserting text
+(display-time-mode 1)                             ; Enable time in the mode-line
+(fringe-mode 0)                                   ; Disable fringes
+(fset 'yes-or-no-p 'y-or-n-p)                     ; Replace yes/no prompts with y/n
+(global-subword-mode 1)                           ; Iterate through CamelCase words
+(menu-bar-mode 0)                                 ; Disable the menu bar
+(mouse-avoidance-mode 'banish)                    ; Avoid collision of mouse with point
+(put 'downcase-region 'disabled nil)              ; Enable downcase-region
+(put 'upcase-region 'disabled nil)                ; Enable upcase-region
+(set-default-coding-systems 'utf-8)               ; Default to utf-8 encoding
+
+#+END_SRC
+This is supposed to do something good
+#+BEGIN_SRC emacs-lisp
+(add-hook 'focus-out-hook #'garbage-collect)
+#+END_SRC
+** Melpa
+#+BEGIN_SRC emacs-lisp
+(require 'package)
+(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                    (not (gnutls-available-p))))
+       (proto (if no-ssl "http" "https")))
+  (when no-ssl
+    (warn "\
+Your version of Emacs does not support SSL connections,
+which is unsafe because it allows man-in-the-middle attacks.
+There are two things you can do about this warning:
+1. Install an Emacs version that does support SSL and be safe.
+
+2. Remove this warning from your init file so you won't see it again."))
+  ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
+  (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+  ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+  (when (< emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
+    (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
+(package-initialize)
+#+END_SRC
+
+** Move lines
+*** Move lines
+Custom function to move lines up and down
+#+BEGIN_SRC emacs-lisp
+(defun move-line (n)
+  "Move the current line up or down by N lines."
+  (interactive "p")
+  (setq col (current-column))
+  (beginning-of-line) (setq start (point))
+  (end-of-line) (forward-char) (setq end (point))
+  (let ((line-text (delete-and-extract-region start end)))
+    (forward-line n)
+    (insert line-text)
+    ;; restore point to original column in moved line
+    (forward-line -1)
+    (forward-char col)))
+
+(defun move-line-up (n)
+  "Move the current line up by N lines."
+  (interactive "p")
+  (move-line (if (null n) -1 (- n))))
+
+(defun move-line-down (n)
+  "Move the current line down by N lines."
+  (interactive "p")
+  (move-line (if (null n) 1 n)))
+
+
+(global-set-key (kbd "M-<up>") 'move-line-up)
+(global-set-key (kbd "M-<down>") 'move-line-down)
+(global-set-key (kbd "M-p") 'move-line-up)
+(global-set-key (kbd "M-n") 'move-line-down)
+#+END_SRC
+*** Open lines
+
+Another function to open lines above and below 
+#+BEGIN_SRC emacs-lisp
+(defun open-line-below ()
+  (interactive)
+  (end-of-line)
+  (newline)
+  (indent-for-tab-command))
+
+(defun open-line-above ()
+  (interactive)
+  (beginning-of-line)
+  (newline)
+  (forward-line -1)
+  (indent-for-tab-command))
+
+
+(global-set-key (kbd "<C-return>") 'open-line-below)
+(global-set-key (kbd "<C-S-return>") 'open-line-above)
+#+END_SRC
+
+*** Reveal lines when gotop
+Goto line, reveal line numbers only when goto is active 
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key [remap goto-line] 'goto-line-with-feedback)
+
+(defun goto-line-with-feedback ()
+  "Show line numbers temporarily, while prompting for the line number input"
+  (interactive)
+  (unwind-protect
+      (progn
+        (linum-mode 1)
+        (goto-line (read-number "Goto line: ")))
+    (linum-mode -1)))
+#+END_SRC
+
+** Autosave and backup
+Lets keep autosave and backup files somewhere else
+#+BEGIN_SRC emacs-lisp
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+#+END_SRC
+
+* Theme and layout
+** Theme
+#+BEGIN_SRC emacs-lisp
+(use-package doom-themes
+  :ensure t
+  :custom
+  (doom-themes-enable-bold t)
+  (doom-themes-enable-italic t)
+  :config
+  (load-theme 'doom-one t)
+  (doom-themes-visual-bell-config)
+  (doom-themes-org-config)
+)
+
+(set-face-attribute 'default nil
+                    :family "Input"
+                    :weight 'normal
+                    :width 'normal)
+#+END_SRC
+** Modeline
+   #+BEGIN_SRC emacs-lisp
+(use-package doom-modeline
+      :ensure t
+      :hook (after-init . doom-modeline-mode))
+   #+END_SRC
+* Ivy / Counsel
+#+BEGIN_SRC emacs-lisp
+(use-package ivy
+  :ensure t
+  :config
+  (ivy-mode 1)
+  (ivy-prescient-mode 1)
+  (company-prescient-mode 1)
+  (prescient-persist-mode 1)
+  (setq ivy-use-virtual-buffers t)
+  (setq enable-recursive-minibuffers t)
+  :bind (("\C-s" . swiper)
+         ("C-c C-r" . ivy-resume)
+         ("<f6>" . ivy-resume)
+         ("M-x" . counsel-M-x)
+         ("C-x C-f" . counsel-find-file)
+         ("<f1> f" . counsel-describe-function)
+         ("<f1> v" . counsel-describe-variable)
+         ("<f1> l" . counsel-find-library)
+         ("<f2> i" . counsel-info-lookup-symbol)
+         ("<f2> u" . counsel-unicode-char)
+         ("C-c g" . counsel-git)
+         ("C-c j" . counsel-git-grep)
+         ("C-c k" . counsel-ag)
+         ("C-x l" . counsel-locate)
+         ("C-S-o" . counsel-rhythmbox))
+
+
+  )
+#+END_SRC
+* Dictionary
+  #+BEGIN_SRC emacs-lisp
+  (use-package google-translate
+    :ensure t
+    :bind (("\C-ct" . google-translate-at-point)
+           ("\C-cT" . google-translate-query-translate))
+
+  )
+  #+END_SRC
+* Smartparens
+
+#+BEGIN_SRC emacs-lisp
+(use-package smartparens
+  :ensure t
+  :bind
+  (("M-<backspace>" . sp-unwrap-sexp)
+  ("M-<left>" . sp-forward-barf-sexp)
+  ("M-<right>" . sp-forward-slurp-sexp)
+  ("M-S-<left>" . sp-backward-slurp-sexp)
+  ("M-S-<right>" . sp-backward-barf-sexp))
+  :hook
+  (after-init . smartparens-global-mode)
+  :custom
+  (sp-highlight-pair-overlay nil)
+  (sp-highlight-wrap-overlay nil)
+  (sp-highlight-wrap-tag-overlay nil)
+  :config
+  (show-paren-mode 1)
+  (setq sp-show-pair-from-inside nil)
+  (require 'smartparens-config)
+  :diminish smartparens-mode)
+
+#+END_SRC
+
+* Orgmode
+** Inital setting
+#+BEGIN_SRC emacs-lisp
+(use-package org
+  :ensure t        ; But it comes with Emacs now!?
+  :init
+  (setq org-use-speed-commands t
+        org-return-follows-link t
+        org-hide-emphasis-markers t
+        org-completion-use-ido t
+        org-outline-path-complete-in-steps nil
+        org-src-fontify-natively t   ;; Pretty code blocks
+        org-src-tab-acts-natively t
+        org-confirm-babel-evaluate nil
+        org-todo-keywords '((sequence "TODO(t)" "DOING(g)" "|" "DONE(d)")
+                            (sequence "|" "CANCELED(c)")))
+  (add-to-list 'auto-mode-alist '("\\.txt\\'" . org-mode))
+  (add-to-list 'auto-mode-alist '(".*/[0-9]*$" . org-mode))   ;; Journal entries
+  (add-hook 'org-mode-hook 'yas-minor-mode-on)
+  :bind (("C-c l" . org-store-link)
+         ("C-c c" . org-capture)
+         ("C-M-|" . indent-rigidly))
+  :config
+
+
+  (define-key org-mode-map (kbd "M-C-n") 'org-end-of-item-list)
+  (define-key org-mode-map (kbd "M-C-p") 'org-beginning-of-item-list)
+  (define-key org-mode-map (kbd "M-C-u") 'outline-up-heading)
+  (define-key org-mode-map (kbd "M-C-w") 'org-table-copy-region)
+  (define-key org-mode-map (kbd "M-C-y") 'org-table-paste-rectangle)
+
+  (define-key org-mode-map [remap org-return] (lambda () (interactive)
+                                                (if (org-in-src-block-p)
+                                                    (org-return)
+                                                  (org-return-indent)))))
+#+END_SRC
+** Layout
+#+BEGIN_SRC emacs-lisp
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+(add-hook 'org-mode-hook (lambda () (visual-line-mode 1)))
+(eval-after-load "org"
+  '(require 'ox-md nil t))
+(setq org-src-preserve-indentation nil 
+      org-edit-src-content-indentation 0)
+(setq org-publish-project-alist
+  '(
+     ("org-mfoot" ; Export my blog to the Jekyll format for ~jekyll build~
+       ;; Path to your org files.
+       :base-directory "~/repositories/mfoot.com/org/"
+       :base-extension "org"
+
+       ;; Path to your Jekyll project.
+       :publishing-directory "~/repositories/mfoot.com/jekyll/"
+       :recursive t
+       :publishing-function org-html-publish-to-html
+       :html-extension "html"
+       :body-only t ;; Only export section between <body> </body>
+
+       :section-numbers nil
+       :with-toc nil
+       :auto-index nil
+       :auto-preamble nil
+       :body-only t
+       :auto-postamble nil
+     )
+
+    ("org-static-mfoot"
+      :base-directory "~/repositories/mfoot.com/org/"
+      :base-extension "css\\|js\\|png\\|jpg\\|gif"
+      :publishing-directory "~/repositories/mfoot.com/jekyll"
+      :recursive t
+      :publishing-function org-publish-attachment
+    )
+
+    ("mfoot.com" :components (
+      "org-mfoot"
+      "org-static-mfoot"
+    )
+  )
+))
+(add-to-list 'load-path "~/.emacs.d/lisp/ox-jekyll-lite/")
+(require 'ox-jekyll-lite)
+(setq org-jekyll-project-root "~/code/jekyll/my-jekyll-site/")
+#+END_SRC
+** Journals
+   #+BEGIN_SRC emacs-lisp
+(use-package org-journal
+  :ensure t
+   :init
+   (setq org-journal-dir "~/journal/")
+   (setq org-journal-date-format "#+TITLE: Journal Entry- %e %b %Y (%A)")
+   (setq org-journal-time-format ""))
+   #+END_SRC
+* Point and region
+
+Easy setup, just press the buttons
+#+BEGIN_SRC emacs-lisp
+(use-package expand-region
+  :bind
+  ("C-+" . er/expand-region)
+  ("C-=" . er/contract-region))
+
+#+END_SRC
+
+** Multiple cursors
+
+#+BEGIN_SRC emacs-lisp
+
+(use-package multiple-cursors
+  :bind
+  (("C-<" . mc/mark-next-like-this)
+  ("C->" . mc/mark-previous-like-this)
+  ("C-c C-<" . mc/mark-all-like-this)
+  ))
+
+
+#+END_SRC
+
+* Comments
+
+#+BEGIN_SRC emacs-lisp
+(defun toggle-comment-on-line ()
+  "comment or uncomment current line"
+  (interactive)
+  (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
+
+(global-set-key (kbd "C-c C-a") 'comment-line)
+  
+#+END_SRC
+
+* Dired 
+#+BEGIN_SRC emacs-lisp
+(use-package dired
+  :ensure nil
+  :preface
+  (defun me/dired-directories-first ()
+    "Sort dired listings with directories first before adding marks."
+    (save-excursion
+      (let (buffer-read-only)
+        (forward-line 2)
+        (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
+      (set-buffer-modified-p nil)))
+  ;:hook
+  ;(dired-mode . dired-hide-details-mode)
+  :custom
+  (dired-auto-revert-buffer t)
+  ;(dired-dwim-target t)
+  ;(dired-hide-details-hide-symlink-targets nil)
+  (dired-listing-switches "-alh")
+  (dired-ls-F-marks-symlinks nil)
+  (dired-recursive-copies 'always)
+  :config
+  (advice-add 'dired-readin :after #'me/dired-directories-first))
+#+END_SRC
+
+* Python
+
+#+BEGIN_SRC emacs-lisp
+(elpy-enable)
+
+; IPython for REPL
+(setq python-shell-interpreter "jupyter"
+      python-shell-interpreter-args "console --simple-prompt"
+      python-shell-prompt-detect-failure-warning nil)
+(add-to-list 'python-shell-completion-native-disabled-interpreters
+             "jupyter")
+
+
+(when (require 'flycheck nil t)
+  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+  (add-hook 'elpy-mode-hook 'flycheck-mode))
+
+(require 'py-autopep8)
+(add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
+
+#+END_SRC
+
+* Magit
+
+#+BEGIN_SRC emacs-lisp
+
+(global-set-key (kbd "C-x g") 'magit-status)
+#+END_SRC
+* Yasnippets
+
+#+BEGIN_SRC emacs-lisp
+
+(add-to-list 'load-path
+              "~/.emacs.d/plugins/yasnippet")
+(require 'yasnippet)
+(yas-global-mode 1)
+#+END_SRC
+* Latex
+Some default settings regarding Latex
+#+BEGIN_SRC emacs-lisp
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+;(setq-default TeX-master nil)
+;(setq TeX-master nil)
+
+(add-hook 'LaTeX-mode-hook 'visual-line-mode)
+(add-hook 'LaTeX-mode-hook 'flyspell-mode)
+(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+
+(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+(setq reftex-plug-into-AUCTeX t)
+(pdf-tools-install)
+(add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
+
+#+END_SRC
+* Iedit
+(require 'iedit)
+
+
+(defun iedit-dwim (arg)
+  "Starts iedit but uses \\[narrow-to-defun] to limit its scope."
+  (interactive "P")
+  (if arg
+      (iedit-mode)
+    (save-excursion
+      (save-restriction
+        (widen)
+        ;; this function determines the scope of `iedit-start'.
+        (if iedit-mode
+            (iedit-done)
+          ;; `current-word' can of course be replaced by other
+          ;; functions.
+          (narrow-to-defun)
+          (iedit-start (current-word) (point-min) (point-max)))))))
+
+
+
+(global-set-key (kbd "C-;") 'iedit-dwim)
+* Tramp
+#+BEGIN_SRC emacs-lisp
+(setq tramp-default-method "ssh")
+(define-key global-map (kbd "C-c s") 'counsel-tramp)
+#+END_SRC
+* Projectile
+  #+BEGIN_SRC emacs-lisp
+(projectile-mode +1)
+(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  #+END_SRC
+* Navigation
+
+  #+BEGIN_SRC emacs-lisp
+(global-set-key [remap move-beginning-of-line] #'me/beginning-of-line-dwim)
+
+(defun me/beginning-of-line-dwim ()
+  "Move point to first non-whitespace character, or beginning of line."
+  (interactive "^")
+  (let ((origin (point)))
+    (beginning-of-line)
+    (and (= origin (point))
+         (back-to-indentation))))
+  #+END_SRC
